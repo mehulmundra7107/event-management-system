@@ -7,15 +7,174 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+
+<!-- Navbar is automatically inserted by addNavbar() in common.js -->
+
 <div class="container">
-    <h1>Master Data</h1>
+    <h1>Master Data Management</h1>
+    <p style="color:#666; margin-bottom:20px;">
+        Part 2: Master records for Venues, Organizers, Clubs, and Event Categories.
+        These master records are referenced by Events in Part 3.
+    </p>
+
+    <!-- =======================================================
+         SECTION 1: Venues (venue table)
+    ======================================================= -->
     <div class="card">
-        <p>This page will be built by <strong>Member 2</strong> (Part 2).</p>
-        <p>It will manage: Venues, Organizers (with phones), Clubs, and Event Categories.</p>
+        <h2>1. Venues</h2>
+        <p style="color:#666; margin-bottom:14px; font-size:13px;">
+            Physical locations where events take place. Capacity must be a positive number (> 0).
+        </p>
+
+        <div class="form-section">
+            <div class="form-group">
+                <label for="venue-name">Venue Name</label>
+                <input type="text" id="venue-name" placeholder="e.g. Conference Hall A">
+            </div>
+
+            <div class="form-group">
+                <label for="venue-location">Location</label>
+                <input type="text" id="venue-location" placeholder="e.g. Building C, 2nd Floor">
+            </div>
+
+            <div class="form-group">
+                <label for="venue-capacity">Capacity (Seats / People)</label>
+                <input type="number" id="venue-capacity" min="1" placeholder="e.g. 150">
+            </div>
+
+            <button class="btn-primary" onclick="submitVenue()">Add Venue</button>
+            <div class="message" id="venue-message"></div>
+        </div>
+
+        <div class="mt-20">
+            <h3 style="font-size:15px; margin-bottom:10px; color:#2c3e50;">List of Venues</h3>
+            <div id="venues-table-container"></div>
+        </div>
     </div>
+
+    <!-- =======================================================
+         SECTION 2: Organizers (organizer & organizer_phone tables)
+    ======================================================= -->
+    <div class="card">
+        <h2>2. Organizers</h2>
+        <p style="color:#666; margin-bottom:14px; font-size:13px;">
+            Faculty coordinators or student heads who organize events. Demonstrates the multivalued phone attribute.
+        </p>
+
+        <div class="form-section">
+            <div class="form-group">
+                <label for="organizer-name">Organizer Name</label>
+                <input type="text" id="organizer-name" placeholder="e.g. Prof. Anand Deshmukh">
+            </div>
+
+            <div class="form-group">
+                <label for="organizer-email">Email Address</label>
+                <input type="email" id="organizer-email" placeholder="e.g. anand.deshmukh@college.edu">
+            </div>
+
+            <div class="form-group">
+                <label for="organizer-dept">Department or Club</label>
+                <input type="text" id="organizer-dept" placeholder="e.g. CSE Department or Coding Club">
+            </div>
+
+            <div class="form-group">
+                <label for="organizer-phone1">Primary Phone</label>
+                <input type="tel" id="organizer-phone1" placeholder="e.g. 9876543210">
+            </div>
+
+            <div class="form-group">
+                <label for="organizer-phone2">Secondary Phone (optional)</label>
+                <input type="tel" id="organizer-phone2" placeholder="Leave blank if only one phone">
+            </div>
+
+            <button class="btn-primary" onclick="submitOrganizer()">Add Organizer</button>
+            <div class="message" id="organizer-message"></div>
+        </div>
+
+        <div class="mt-20">
+            <h3 style="font-size:15px; margin-bottom:10px; color:#2c3e50;">List of Organizers</h3>
+            <div id="organizers-table-container"></div>
+            <!-- Phone list container shown when 'View Phones' is clicked -->
+            <div id="organizer-phone-display" style="display:none;" class="phone-list mt-10"></div>
+        </div>
+    </div>
+
+    <!-- =======================================================
+         SECTION 3: Clubs / Committees (club table)
+    ======================================================= -->
+    <div class="card">
+        <h2>3. Clubs &amp; Committees</h2>
+        <p style="color:#666; margin-bottom:14px; font-size:13px;">
+            Student bodies and committees that sponsor and manage campus events.
+        </p>
+
+        <div class="form-section">
+            <div class="form-group">
+                <label for="club-name">Club Name</label>
+                <input type="text" id="club-name" placeholder="e.g. Robotics Club">
+            </div>
+
+            <div class="form-group">
+                <label for="club-desc">Description</label>
+                <textarea id="club-desc" rows="2" placeholder="e.g. Automation, bots, and IoT hardware projects"></textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="club-email">Contact Email</label>
+                <input type="email" id="club-email" placeholder="e.g. robotics@college.edu">
+            </div>
+
+            <button class="btn-primary" onclick="submitClub()">Add Club</button>
+            <div class="message" id="club-message"></div>
+        </div>
+
+        <div class="mt-20">
+            <h3 style="font-size:15px; margin-bottom:10px; color:#2c3e50;">List of Clubs</h3>
+            <div id="clubs-table-container"></div>
+        </div>
+    </div>
+
+    <!-- =======================================================
+         SECTION 4: Event Categories (event_category table)
+    ======================================================= -->
+    <div class="card">
+        <h2>4. Event Categories</h2>
+        <p style="color:#666; margin-bottom:14px; font-size:13px;">
+            Classification of events (e.g. Technical, Cultural, Sports, Workshop).
+        </p>
+
+        <div class="form-section">
+            <div class="form-group">
+                <label for="category-name">Category Name</label>
+                <input type="text" id="category-name" placeholder="e.g. Literary">
+            </div>
+
+            <div class="form-group">
+                <label for="category-desc">Description</label>
+                <textarea id="category-desc" rows="2" placeholder="e.g. Debates, creative writing, and quiz competitions"></textarea>
+            </div>
+
+            <button class="btn-primary" onclick="submitCategory()">Add Category</button>
+            <div class="message" id="category-message"></div>
+        </div>
+
+        <div class="mt-20">
+            <h3 style="font-size:15px; margin-bottom:10px; color:#2c3e50;">List of Event Categories</h3>
+            <div id="categories-table-container"></div>
+        </div>
+    </div>
+
+    <!-- =======================================================
+         Behind the Scenes Box
+         Displays the executed SQL query, parameter bindings,
+         and raw response payload for inspection.
+    ======================================================= -->
     <div id="behind-the-scenes"></div>
 </div>
+
+<!-- Load shared helper functions first, then master page scripts -->
 <script src="common.js"></script>
-<script>window.onload = function() { addNavbar(); };</script>
+<script src="master.js"></script>
+
 </body>
 </html>
