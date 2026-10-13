@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Students - Event Management System</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- Navbar is inserted here by addNavbar() in common.js -->
+
+<div class="container">
+    <h1>Students</h1>
+
+    <!-- -------------------------------------------------------
+         SECTION 1: Add / Edit Student Form
+    ------------------------------------------------------- -->
+    <div class="card form-section" id="student-form-card">
+        <h2 id="form-heading">Add New Student</h2>
+
+        <!-- Hidden input: holds the student_id when editing.
+             When adding, this is empty. -->
+        <input type="hidden" id="edit-student-id" value="">
+
+        <div class="form-group">
+            <label for="student-name">Full Name</label>
+            <input type="text" id="student-name" placeholder="e.g. Asha Verma">
+        </div>
+
+        <div class="form-group">
+            <label for="student-email">Email Address</label>
+            <input type="email" id="student-email" placeholder="e.g. asha@student.edu">
+        </div>
+
+        <div class="form-group">
+            <label for="student-department">Department</label>
+            <input type="text" id="student-department" placeholder="e.g. CSE, IT, ENTC, Mechanical">
+        </div>
+
+        <div class="form-group">
+            <label for="student-year">Year (1 to 4)</label>
+            <input type="number" id="student-year" min="1" max="4" placeholder="e.g. 2">
+        </div>
+
+        <!-- Phone numbers: multivalued attribute from ER diagram.
+             Phone 2 is optional. -->
+        <div class="form-group">
+            <label for="student-phone1">Phone Number 1</label>
+            <input type="tel" id="student-phone1" placeholder="e.g. 9876543210">
+        </div>
+
+        <div class="form-group">
+            <label for="student-phone2">Phone Number 2 (optional)</label>
+            <input type="tel" id="student-phone2" placeholder="Leave blank if only one number">
+        </div>
+
+        <button class="btn-primary" id="submit-btn" onclick="submitStudent()">Add Student</button>
+        <button class="btn-secondary no-print" id="cancel-edit-btn"
+                onclick="cancelEdit()" style="display:none;">Cancel Edit</button>
+
+        <!-- Message shown after form submit -->
+        <div class="message" id="form-message"></div>
+    </div>
+
+    <!-- -------------------------------------------------------
+         SECTION 2: List of Students
+    ------------------------------------------------------- -->
+    <div class="card">
+        <h2>List of Students</h2>
+
+        <!-- The table is built here by buildTable() in students.js -->
+        <div id="students-table-container"></div>
+
+        <!-- Phone list shown when "View Phones" is clicked -->
+        <div id="phone-display" style="display:none;" class="phone-list mt-10"></div>
+    </div>
+
+    <!-- -------------------------------------------------------
+         Behind the Scenes box
+         Shows the SQL query, parameters and raw JSON
+         for every API call made on this page.
+    ------------------------------------------------------- -->
+    <div id="behind-the-scenes"></div>
+</div>
+
+<!-- Load shared helpers first, then this page's logic -->
+<script src="common.js"></script>
+<script src="students.js"></script>
+
+</body>
+</html>

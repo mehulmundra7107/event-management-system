@@ -1,0 +1,297 @@
+/* style.css
+   Shared stylesheet for the Event Management System.
+   Simple, clean, readable - no frameworks needed.
+*/
+
+/* ---------------------------------------------------------------
+   Base reset and font
+--------------------------------------------------------------- */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    font-size: 15px;
+    background-color: #f5f5f5;
+    color: #333;
+}
+
+/* ---------------------------------------------------------------
+   Navbar
+--------------------------------------------------------------- */
+nav {
+    background-color: #2c3e50;
+    padding: 0 20px;
+    display: flex;
+    align-items: center;
+    gap: 0;
+}
+
+nav .nav-brand {
+    color: #ecf0f1;
+    font-size: 18px;
+    font-weight: bold;
+    padding: 14px 20px 14px 0;
+    margin-right: 20px;
+    border-right: 1px solid #4a6278;
+}
+
+nav a {
+    color: #bdc3c7;
+    text-decoration: none;
+    padding: 14px 16px;
+    display: inline-block;
+    font-size: 14px;
+}
+
+nav a:hover,
+nav a.active {
+    background-color: #3d5166;
+    color: #ecf0f1;
+}
+
+/* ---------------------------------------------------------------
+   Page wrapper
+--------------------------------------------------------------- */
+.container {
+    max-width: 1100px;
+    margin: 30px auto;
+    padding: 0 20px;
+}
+
+h1 {
+    font-size: 24px;
+    margin-bottom: 24px;
+    color: #2c3e50;
+    border-bottom: 2px solid #2c3e50;
+    padding-bottom: 8px;
+}
+
+h2 {
+    font-size: 18px;
+    margin-bottom: 16px;
+    color: #34495e;
+}
+
+/* ---------------------------------------------------------------
+   Card / section box
+--------------------------------------------------------------- */
+.card {
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    padding: 20px 24px;
+    margin-bottom: 28px;
+}
+
+/* ---------------------------------------------------------------
+   Forms
+--------------------------------------------------------------- */
+.form-group {
+    margin-bottom: 14px;
+}
+
+.form-group label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 5px;
+    color: #555;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+    width: 100%;
+    padding: 8px 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 14px;
+    background: #fafafa;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-color: #2980b9;
+    background: #fff;
+}
+
+/* ---------------------------------------------------------------
+   Buttons
+--------------------------------------------------------------- */
+button {
+    padding: 8px 18px;
+    border: none;
+    border-radius: 4px;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+button.btn-primary {
+    background-color: #2980b9;
+    color: #fff;
+}
+
+button.btn-primary:hover {
+    background-color: #1f6fa0;
+}
+
+button.btn-danger {
+    background-color: #e74c3c;
+    color: #fff;
+    padding: 5px 12px;
+    font-size: 13px;
+}
+
+button.btn-danger:hover {
+    background-color: #c0392b;
+}
+
+button.btn-secondary {
+    background-color: #7f8c8d;
+    color: #fff;
+    padding: 5px 12px;
+    font-size: 13px;
+}
+
+button.btn-secondary:hover {
+    background-color: #636e72;
+}
+
+button.btn-edit {
+    background-color: #f39c12;
+    color: #fff;
+    padding: 5px 12px;
+    font-size: 13px;
+}
+
+button.btn-edit:hover {
+    background-color: #d68910;
+}
+
+/* ---------------------------------------------------------------
+   Messages (success / error under forms)
+--------------------------------------------------------------- */
+.message {
+    margin-top: 10px;
+    padding: 8px 12px;
+    border-radius: 4px;
+    font-size: 14px;
+    display: none;  /* hidden by default; shown by showMessage() */
+}
+
+.message.success {
+    background-color: #d5f5e3;
+    color: #1e8449;
+    border: 1px solid #a9dfbf;
+    display: block;
+}
+
+.message.error {
+    background-color: #fdecea;
+    color: #c0392b;
+    border: 1px solid #f5b7b1;
+    display: block;
+}
+
+/* ---------------------------------------------------------------
+   Tables
+--------------------------------------------------------------- */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+}
+
+table th {
+    background-color: #2c3e50;
+    color: #ecf0f1;
+    text-align: left;
+    padding: 10px 12px;
+}
+
+table td {
+    padding: 9px 12px;
+    border-bottom: 1px solid #e8e8e8;
+    vertical-align: middle;
+}
+
+table tr:hover td {
+    background-color: #f0f4f8;
+}
+
+/* Sub-table shown when View Phones is clicked */
+.phone-list {
+    background: #f8f9fa;
+    padding: 10px 14px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    margin-top: 12px;
+    font-size: 13px;
+}
+
+/* ---------------------------------------------------------------
+   Behind the Scenes box
+   Shows the SQL query, parameters, and raw JSON for each action.
+   This is the "learning" panel for the DBMS demo.
+--------------------------------------------------------------- */
+#behind-the-scenes {
+    background-color: #1e1e2e;
+    color: #cdd6f4;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 13px;
+    padding: 16px 20px;
+    border-radius: 6px;
+    margin-top: 30px;
+    white-space: pre-wrap;       /* wrap long lines */
+    word-break: break-all;
+    min-height: 60px;
+    border: 1px solid #45475a;
+}
+
+#behind-the-scenes h3 {
+    color: #89b4fa;
+    margin-bottom: 10px;
+    font-size: 14px;
+    font-family: Arial, sans-serif;
+}
+
+#behind-the-scenes .label {
+    color: #a6e3a1;
+    font-weight: bold;
+}
+
+/* ---------------------------------------------------------------
+   Utility
+--------------------------------------------------------------- */
+.mt-10 { margin-top: 10px; }
+.mt-20 { margin-top: 20px; }
+
+/* ---------------------------------------------------------------
+   Print styles
+   When the user prints a report page, hide navigation, forms,
+   and buttons so the printed output looks clean.
+--------------------------------------------------------------- */
+@media print {
+    nav,
+    .form-section,
+    button,
+    #behind-the-scenes,
+    .no-print {
+        display: none !important;
+    }
+
+    body {
+        background: #fff;
+    }
+
+    .container {
+        margin: 0;
+        padding: 0;
+        max-width: 100%;
+    }
+}

@@ -1,0 +1,11 @@
+# Files and folders that must NOT be pushed to GitHub
+
+# node_modules is huge - it can be regenerated with npm install
+node_modules/
+
+# .env contains secret passwords - never commit it
+.env
+
+# OS files
+.DS_Store
+Thumbs.db
