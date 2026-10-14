@@ -7,16 +7,121 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+
+<!-- Navbar is automatically inserted by addNavbar() in common.js -->
+
 <div class="container">
-    <h1>Events</h1>
-    <div class="card">
-        <p>This page will be built by <strong>Member 3</strong> (Part 3).</p>
-        <p>It will manage events with venue, organizer, club, and category dropdowns,
-           and show the derived event status (Upcoming / Ongoing / Completed).</p>
+    <h1>Events Management</h1>
+    <p style="color:#666; margin-bottom:20px;">
+        Part 3: Events module. Manages college events with venue, organizer, club, and category foreign keys.
+        Event status is derived dynamically in SQL and never stored.
+    </p>
+
+    <!-- -------------------------------------------------------
+         SECTION 1: Add / Edit Event Form
+    ------------------------------------------------------- -->
+    <div class="card form-section" id="event-form-card">
+        <h2 id="form-heading">Add New Event</h2>
+
+        <!-- Hidden input: holds the event_id when editing. Empty when adding. -->
+        <input type="hidden" id="edit-event-id" value="">
+
+        <div class="form-group">
+            <label for="event-name">Event Name *</label>
+            <input type="text" id="event-name" placeholder="e.g. Hackathon 2026, Annual Cultural Fest">
+        </div>
+
+        <div class="form-group">
+            <label for="event-description">Description</label>
+            <textarea id="event-description" rows="2" placeholder="Brief description of the event"></textarea>
+        </div>
+
+        <div class="form-group">
+            <label for="event-date">Event Date *</label>
+            <input type="date" id="event-date">
+        </div>
+
+        <div class="form-group">
+            <label for="event-type">Event Type</label>
+            <input type="text" id="event-type" placeholder="e.g. Competition, Workshop, Seminar, Cultural">
+        </div>
+
+        <div style="display: flex; gap: 16px;">
+            <div class="form-group" style="flex: 1;">
+                <label for="event-start-time">Start Time</label>
+                <input type="time" id="event-start-time">
+            </div>
+            <div class="form-group" style="flex: 1;">
+                <label for="event-end-time">End Time</label>
+                <input type="time" id="event-end-time">
+            </div>
+        </div>
+
+        <!-- Master Data Foreign Key Dropdowns (populated from Part 2 master routes) -->
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+            <div class="form-group">
+                <label for="event-venue">Venue *</label>
+                <select id="event-venue">
+                    <option value="">-- select venue --</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="event-organizer">Organizer *</label>
+                <select id="event-organizer">
+                    <option value="">-- select organizer --</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="event-club">Sponsoring Club / Committee *</label>
+                <select id="event-club">
+                    <option value="">-- select club --</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="event-category">Category *</label>
+                <select id="event-category">
+                    <option value="">-- select category --</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="mt-10">
+            <button class="btn-primary" id="event-submit-btn" onclick="submitEvent()">Add Event</button>
+            <button class="btn-secondary no-print" id="event-cancel-btn" onclick="cancelEdit()" style="display:none;">Cancel Edit</button>
+        </div>
+
+        <!-- Feedback message under form -->
+        <div class="message" id="event-form-message"></div>
     </div>
+
+    <!-- -------------------------------------------------------
+         SECTION 2: List of Events
+    ------------------------------------------------------- -->
+    <div class="card">
+        <h2>List of Events</h2>
+        <p style="font-size:13px; color:#555; margin-bottom:14px; background:#eef5fb; padding:8px 12px; border-left:4px solid #2980b9; border-radius:3px;">
+            <strong>DBMS Concept Note:</strong> Event Status (<em>Upcoming / Ongoing / Completed</em>) is a
+            <strong>derived attribute</strong> computed in real time using a SQL <code>CASE</code> expression comparing <code>event_date</code>
+            with <code>CURDATE()</code>. It is NOT stored as a physical column in the <code>event</code> table.
+        </p>
+
+        <!-- Events table container -->
+        <div id="events-table-container"></div>
+    </div>
+
+    <!-- -------------------------------------------------------
+         Behind the Scenes box
+         Shows SQL query, parameters, row count, and raw JSON response
+    ------------------------------------------------------- -->
     <div id="behind-the-scenes"></div>
 </div>
+
+<!-- Load shared helpers first, then this page's script -->
 <script src="common.js"></script>
-<script>window.onload = function() { addNavbar(); };</script>
+<script src="events.js"></script>
+
 </body>
 </html>
