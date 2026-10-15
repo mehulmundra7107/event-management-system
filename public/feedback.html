@@ -7,15 +7,84 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+
+<!-- Navbar is inserted here by addNavbar() in common.js -->
+
 <div class="container">
-    <h1>Feedback</h1>
-    <div class="card">
-        <p>This page will be built by <strong>Member 4</strong> (Part 4).</p>
-        <p>It will handle student feedback and ratings (1–5) for events, with CHECK constraint demo.</p>
+    <h1>Event Feedback & Ratings</h1>
+
+    <!-- -------------------------------------------------------
+         SECTION 1: Submit Feedback Form
+    ------------------------------------------------------- -->
+    <div class="card form-section" id="feedback-form-card">
+        <h2>Submit Feedback for an Event</h2>
+
+        <div class="form-group">
+            <label for="student-id">Select Student</label>
+            <select id="student-id">
+                <option value="">-- select --</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="event-id">Select Event</label>
+            <select id="event-id">
+                <option value="">-- select --</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="rating">Rating (1 to 5 Stars)</label>
+            <select id="rating">
+                <option value="">-- select rating --</option>
+                <option value="5">5 - Excellent</option>
+                <option value="4">4 - Good</option>
+                <option value="3">3 - Average</option>
+                <option value="2">2 - Poor</option>
+                <option value="1">1 - Very Poor</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="comments">Comments</label>
+            <textarea id="comments" rows="3" placeholder="Share your experience or feedback..."></textarea>
+        </div>
+
+        <button class="btn-primary" id="submit-btn" onclick="submitFeedback()">Submit Feedback</button>
+
+        <!-- Message shown after form submit -->
+        <div class="message" id="form-message"></div>
     </div>
+
+    <!-- -------------------------------------------------------
+         SECTION 2: List of Feedback with Event Filter
+    ------------------------------------------------------- -->
+    <div class="card">
+        <h2>Feedback Records</h2>
+
+        <!-- Event Filter Dropdown -->
+        <div class="form-group" style="max-width: 350px; margin-bottom: 20px;">
+            <label for="filter-event-id">Filter by Event:</label>
+            <select id="filter-event-id" onchange="filterFeedback()">
+                <option value="">-- All Events --</option>
+            </select>
+        </div>
+
+        <!-- The table is built here by buildTable() in feedback.js -->
+        <div id="feedback-table-container"></div>
+    </div>
+
+    <!-- -------------------------------------------------------
+         Behind the Scenes box
+         Shows the SQL query, parameters, and raw JSON
+         for every API call made on this page.
+    ------------------------------------------------------- -->
     <div id="behind-the-scenes"></div>
 </div>
+
+<!-- Load shared helpers first, then this page's logic -->
 <script src="common.js"></script>
-<script>window.onload = function() { addNavbar(); };</script>
+<script src="feedback.js"></script>
+
 </body>
 </html>
