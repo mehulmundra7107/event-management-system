@@ -3,61 +3,117 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Events - Event Management System</title>
+    <title>Events - COEP Event Management System</title>
     <link rel="stylesheet" href="style.css">
     <style>
-        /* Light COEP watermark background */
         body {
-            background-color: #f3f5f8;
-            background-image:
-                linear-gradient(rgba(244, 247, 251, 0.92), rgba(244, 247, 251, 0.92)),
-                url('images/coep_campus.png');
-            background-attachment: fixed;
-            background-size: cover;
-            background-position: center top;
-            background-repeat: no-repeat;
+            background: linear-gradient(180deg, #dbe6f2 0%, #e8f0f8 35%, #f1f4f8 100%);
             min-height: 100vh;
+            margin: 0;
+            overflow-x: hidden;
+            position: relative;
         }
 
+        /* Historic Campus Building on the Left (Full Color, Framed to Left of Form) */
+        .coep-bg-left {
+            position: fixed;
+            left: 0;
+            bottom: 0;
+            width: 27vw;
+            max-width: 420px;
+            min-width: 200px;
+            max-height: 82vh;
+            object-fit: cover;
+            object-position: left bottom;
+            z-index: 0;
+            pointer-events: none;
+            opacity: 1; /* kept in natural rich color, not washed out */
+            filter: drop-shadow(4px 4px 15px rgba(0,0,0,0.12));
+            -webkit-mask-image: linear-gradient(to right, rgba(0,0,0,1) 75%, rgba(0,0,0,0) 100%);
+            mask-image: linear-gradient(to right, rgba(0,0,0,1) 75%, rgba(0,0,0,0) 100%);
+        }
+
+        /* Iconic Bell Tower on the Right (Full Color, Framed to Right of Form) */
+        .coep-bg-right {
+            position: fixed;
+            right: 0;
+            bottom: 0;
+            width: 23vw;
+            max-width: 340px;
+            min-width: 180px;
+            max-height: 88vh;
+            object-fit: contain;
+            object-position: right bottom;
+            z-index: 0;
+            pointer-events: none;
+            opacity: 1; /* kept in natural rich color, not washed out */
+            filter: drop-shadow(-4px 4px 15px rgba(0,0,0,0.12));
+            -webkit-mask-image: linear-gradient(to left, rgba(0,0,0,1) 80%, rgba(0,0,0,0) 100%);
+            mask-image: linear-gradient(to left, rgba(0,0,0,1) 80%, rgba(0,0,0,0) 100%);
+        }
+
+        /* Central container holding the form and table */
         .container {
             position: relative;
             z-index: 2;
+            max-width: 860px;
+            margin: 24px auto;
+            padding: 0 16px;
         }
 
-        /* Subtle Bell Tower watermark on bottom right */
-        .bell-tower-watermark {
-            position: fixed;
-            right: 15px;
-            bottom: 10px;
-            width: 240px;
-            max-width: 26vw;
-            opacity: 0.16;
-            pointer-events: none;
-            z-index: 1;
-            filter: drop-shadow(0 4px 12px rgba(0,0,0,0.06));
+        .coep-header {
+            text-align: center;
+            margin-bottom: 22px;
         }
 
-        /* Clean curved white cards with soft elevation */
+        .coep-header h1 {
+            font-size: 26px;
+            color: #1a365d;
+            border-bottom: none;
+            padding-bottom: 0;
+            margin-bottom: 4px;
+            letter-spacing: 0.5px;
+        }
+
+        .coep-header .sub-header {
+            color: #4a5568;
+            font-size: 15px;
+            font-weight: 500;
+        }
+
+        /* Curved white form and table cards */
         .card {
-            background: rgba(255, 255, 255, 0.97) !important;
-            border-radius: 12px !important;
-            border: 1px solid #dce4ec !important;
-            box-shadow: 0 4px 18px rgba(44, 62, 80, 0.06) !important;
+            background: rgba(255, 255, 255, 0.96) !important;
+            border-radius: 14px !important;
+            border: 1px solid rgba(226, 232, 240, 0.95) !important;
+            box-shadow: 0 10px 30px rgba(15, 23, 42, 0.1) !important;
+            backdrop-filter: blur(6px);
+            padding: 24px 28px !important;
+            margin-bottom: 24px !important;
+        }
+
+        .form-group label {
+            color: #2d3748;
+            font-weight: 600;
+            font-size: 13.5px;
         }
 
         .form-group input,
         .form-group select,
         .form-group textarea {
-            border-radius: 6px !important;
+            border-radius: 8px !important;
             border: 1px solid #cbd5e1 !important;
             background: #ffffff !important;
+            font-size: 14px;
+            padding: 9px 12px;
         }
 
         .form-group input:focus,
         .form-group select:focus,
         .form-group textarea:focus {
-            border-color: #2980b9 !important;
-            background: #ffffff !important;
+            border-color: #2563eb !important;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15) !important;
+            outline: none;
         }
 
         .dropdown-grid {
@@ -66,23 +122,53 @@
             gap: 16px;
         }
 
-        @media (max-width: 768px) {
+        table {
+            background: #ffffff;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        table th {
+            background-color: #1e293b !important;
+        }
+
+        @media (max-width: 1200px) {
+            .coep-bg-left {
+                width: 20vw;
+                opacity: 0.8;
+            }
+            .coep-bg-right {
+                width: 18vw;
+                opacity: 0.8;
+            }
+        }
+
+        @media (max-width: 900px) {
+            .coep-bg-left,
+            .coep-bg-right {
+                opacity: 0.2;
+                z-index: 0;
+            }
             .dropdown-grid {
                 grid-template-columns: 1fr;
-            }
-            .bell-tower-watermark {
-                display: none;
             }
         }
     </style>
 </head>
 <body>
 
-<!-- Subtle COEP Bell Tower watermark on right -->
-<img src="images/coep_bell_tower.png" alt="" class="bell-tower-watermark">
+<!-- Left Building Painting (COEP Campus) -->
+<img src="images/coep_campus.png" alt="COEP Campus Building" class="coep-bg-left">
+
+<!-- Right Tower Painting (COEP Bell Tower) -->
+<img src="images/coep_bell_tower.png" alt="COEP Bell Tower" class="coep-bg-right">
 
 <div class="container">
-    <h1>Events Management</h1>
+    <div class="coep-header">
+        <h1>COEP Technological University</h1>
+        <div class="sub-header">Event Management System — Events Management</div>
+    </div>
 
     <!-- -------------------------------------------------------
          SECTION 1: Add / Edit Event Form
