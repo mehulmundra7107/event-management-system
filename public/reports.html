@@ -7,15 +7,75 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+
+<!-- Navbar is inserted here by addNavbar() in common.js -->
+
 <div class="container">
-    <h1>Reports</h1>
-    <div class="card">
-        <p>This page will be built by <strong>Member 4</strong> (Part 4).</p>
-        <p>It will show SQL-generated reports with Print and CSV download functionality.</p>
+    <h1>System Reports</h1>
+
+    <!-- -------------------------------------------------------
+         SECTION 1: Report Selection Controls
+    ------------------------------------------------------- -->
+    <div class="card form-section">
+        <h2>Select and Generate Report</h2>
+
+        <div class="form-group">
+            <label for="report-select">Choose Report</label>
+            <select id="report-select" onchange="onReportChange()">
+                <option value="">-- select a report --</option>
+                <option value="registrations-per-event">1. Registrations per Event (LEFT JOIN, COUNT, GROUP BY)</option>
+                <option value="average-rating-per-event">2. Average Rating per Event (INNER JOIN, AVG, GROUP BY)</option>
+                <option value="top-rated-events">3. Top 3 Rated Events (AVG, GROUP BY, ORDER BY DESC, LIMIT 3)</option>
+                <option value="events-per-club">4. Events per Club (LEFT JOIN, COUNT, GROUP BY)</option>
+                <option value="events-per-category">5. Events per Category (LEFT JOIN, COUNT, GROUP BY)</option>
+                <option value="venue-usage">6. Venue Usage & Capacity (3-table JOIN, COUNT, GROUP BY)</option>
+                <option value="upcoming-events">7. Upcoming Events (4-table INNER JOIN, WHERE event_date >= CURDATE())</option>
+                <option value="events-with-no-registrations">8. Events with No Registrations (LEFT JOIN, WHERE IS NULL)</option>
+                <option value="student-history">9. Student Registration History (JOIN, parameterized WHERE)</option>
+            </select>
+        </div>
+
+        <!-- Student selector (shown only when Student Registration History is selected) -->
+        <div class="form-group" id="student-select-group" style="display: none;">
+            <label for="student-select">Select Student</label>
+            <select id="student-select">
+                <option value="">-- select student --</option>
+            </select>
+        </div>
+
+        <button class="btn-primary" onclick="runReport()">Generate Report</button>
+        <button class="btn-secondary no-print" id="print-btn" onclick="printReport()" style="display: none; margin-left: 10px;">Print / Save as PDF</button>
+        <button class="btn-secondary no-print" id="csv-btn" onclick="downloadCSV()" style="display: none; margin-left: 10px;">Download CSV</button>
+
+        <!-- Message div -->
+        <div class="message" id="report-message"></div>
     </div>
+
+    <!-- -------------------------------------------------------
+         SECTION 2: Report Results View
+    ------------------------------------------------------- -->
+    <div class="card">
+        <!-- Report title & timestamp printed at the top of the table -->
+        <div id="report-header" style="display: none; margin-bottom: 16px;">
+            <h2 id="report-title" style="margin-bottom: 4px;"></h2>
+            <p id="report-date" style="color: #666; font-size: 13px;"></p>
+        </div>
+
+        <div id="report-table-container">
+            <p style="color: #777; font-style: italic;">Select a report above and click Generate Report.</p>
+        </div>
+    </div>
+
+    <!-- -------------------------------------------------------
+         Behind the Scenes box
+         Shows the SQL query and raw JSON for the generated report.
+    ------------------------------------------------------- -->
     <div id="behind-the-scenes"></div>
 </div>
+
+<!-- Load shared helpers first, then this page's logic -->
 <script src="common.js"></script>
-<script>window.onload = function() { addNavbar(); };</script>
+<script src="reports.js"></script>
+
 </body>
 </html>
