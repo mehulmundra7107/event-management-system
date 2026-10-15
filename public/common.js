@@ -101,7 +101,7 @@ function showBehindTheScenes(result) {
     var rowCount = (result.data && Array.isArray(result.data)) ? result.data.length : '-';
 
     // Build the display text
-    var content = '<h3>&#128270; Behind the Scenes</h3>';
+    var content = '<h3>Behind the Scenes</h3>';
     content += '<span class="label">SQL Query:</span>\n' + (result.sql || '(none)') + '\n\n';
     content += '<span class="label">Parameters (? values):</span>\n' + JSON.stringify(result.params || []) + '\n\n';
     content += '<span class="label">Rows returned:</span> ' + rowCount + '\n\n';
