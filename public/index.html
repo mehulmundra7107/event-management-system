@@ -5,17 +5,91 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard - Event Management System</title>
     <link rel="stylesheet" href="style.css">
+    <style>
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 20px;
+            margin-bottom: 28px;
+        }
+        .stat-card {
+            background: #fff;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            padding: 20px;
+            text-align: center;
+            border-top: 4px solid #2980b9;
+        }
+        .stat-card.green  { border-top-color: #27ae60; }
+        .stat-card.orange { border-top-color: #e67e22; }
+        .stat-card.purple { border-top-color: #8e44ad; }
+        .stat-number {
+            font-size: 32px;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-top: 8px;
+        }
+        .stat-label {
+            font-size: 14px;
+            color: #7f8c8d;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+    </style>
 </head>
 <body>
+
+<!-- Navbar is inserted here by addNavbar() in common.js -->
+
 <div class="container">
-    <h1>Dashboard</h1>
-    <div class="card">
-        <p>This page will be built by <strong>Member 4</strong> (Part 4).</p>
-        <p>It will show summary counts (students, events, registrations, feedback) and upcoming events.</p>
+    <h1>System Dashboard</h1>
+
+    <!-- -------------------------------------------------------
+         SECTION 1: Summary Metric Cards (4 Simple Counts)
+    ------------------------------------------------------- -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-label">Total Students</div>
+            <div class="stat-number" id="count-students">0</div>
+        </div>
+
+        <div class="stat-card green">
+            <div class="stat-label">Total Events</div>
+            <div class="stat-number" id="count-events">0</div>
+        </div>
+
+        <div class="stat-card orange">
+            <div class="stat-label">Total Registrations</div>
+            <div class="stat-number" id="count-registrations">0</div>
+        </div>
+
+        <div class="stat-card purple">
+            <div class="stat-label">Feedback Entries</div>
+            <div class="stat-number" id="count-feedback">0</div>
+        </div>
     </div>
+
+    <!-- -------------------------------------------------------
+         SECTION 2: Upcoming Events (Next 5)
+    ------------------------------------------------------- -->
+    <div class="card">
+        <h2>Upcoming Events (Next 5)</h2>
+        <p style="color: #666; font-size: 13px; margin-bottom: 12px;">
+            Fetched dynamically from the database where <code>event_date &gt;= CURDATE()</code> ordered by date.
+        </p>
+        <div id="upcoming-events-container"></div>
+    </div>
+
+    <!-- -------------------------------------------------------
+         Behind the Scenes box
+         Shows the SQL queries and JSON returned for the dashboard.
+    ------------------------------------------------------- -->
     <div id="behind-the-scenes"></div>
 </div>
+
+<!-- Load shared helpers first, then this page's logic -->
 <script src="common.js"></script>
-<script>window.onload = function() { addNavbar(); };</script>
+<script src="index.js"></script>
+
 </body>
 </html>
