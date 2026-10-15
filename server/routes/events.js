@@ -23,6 +23,84 @@ function getFriendlyError(err) {
 }
 
 // ---------------------------------------------------------------
+// Resolvers: ensure that selected Master Data names or IDs map
+// to existing foreign key IDs in venue, organizer, club, and event_category.
+// This guarantees referential integrity without foreign key violations.
+// ---------------------------------------------------------------
+async function resolveVenueId(venueValue) {
+    if (!venueValue) return null;
+    if (!isNaN(venueValue) && Number(venueValue) > 0) {
+        const [rows] = await db.query('SELECT venue_id FROM venue WHERE venue_id = ?', [Number(venueValue)]);
+        if (rows.length > 0) return rows[0].venue_id;
+    }
+    const cleanName = String(venueValue).trim();
+    const [existing] = await db.query('SELECT venue_id FROM venue WHERE venue_name = ?', [cleanName]);
+    if (existing.length > 0) return existing[0].venue_id;
+
+    // Insert if not already present in venue table
+    const [inserted] = await db.query(
+        'INSERT INTO venue (venue_name, location, capacity) VALUES (?, ?, ?)',
+        [cleanName, 'COEP Campus', 300]
+    );
+    return inserted.insertId;
+}
+
+async function resolveOrganizerId(organizerValue) {
+    if (!organizerValue) return null;
+    if (!isNaN(organizerValue) && Number(organizerValue) > 0) {
+        const [rows] = await db.query('SELECT organizer_id FROM organizer WHERE organizer_id = ?', [Number(organizerValue)]);
+        if (rows.length > 0) return rows[0].organizer_id;
+    }
+    const cleanName = String(organizerValue).trim();
+    const [existing] = await db.query('SELECT organizer_id FROM organizer WHERE name = ?', [cleanName]);
+    if (existing.length > 0) return existing[0].organizer_id;
+
+    const emailPrefix = cleanName.toLowerCase().replace(/[^a-z0-9]/g, '');
+    const uniqueEmail = `${emailPrefix}_${Date.now()}@coep.ac.in`;
+    const [inserted] = await db.query(
+        'INSERT INTO organizer (name, email, department_club) VALUES (?, ?, ?)',
+        [cleanName, uniqueEmail, 'COEP']
+    );
+    return inserted.insertId;
+}
+
+async function resolveClubId(clubValue) {
+    if (!clubValue) return null;
+    if (!isNaN(clubValue) && Number(clubValue) > 0) {
+        const [rows] = await db.query('SELECT club_id FROM club WHERE club_id = ?', [Number(clubValue)]);
+        if (rows.length > 0) return rows[0].club_id;
+    }
+    const cleanName = String(clubValue).trim();
+    const [existing] = await db.query('SELECT club_id FROM club WHERE club_name = ?', [cleanName]);
+    if (existing.length > 0) return existing[0].club_id;
+
+    const emailPrefix = cleanName.toLowerCase().replace(/[^a-z0-9]/g, '');
+    const uniqueEmail = `${emailPrefix}_${Date.now()}@coep.ac.in`;
+    const [inserted] = await db.query(
+        'INSERT INTO club (club_name, description, contact_email) VALUES (?, ?, ?)',
+        [cleanName, 'COEP Student Club / Committee', uniqueEmail]
+    );
+    return inserted.insertId;
+}
+
+async function resolveCategoryId(categoryValue) {
+    if (!categoryValue) return null;
+    if (!isNaN(categoryValue) && Number(categoryValue) > 0) {
+        const [rows] = await db.query('SELECT category_id FROM event_category WHERE category_id = ?', [Number(categoryValue)]);
+        if (rows.length > 0) return rows[0].category_id;
+    }
+    const cleanName = String(categoryValue).trim();
+    const [existing] = await db.query('SELECT category_id FROM event_category WHERE category_name = ?', [cleanName]);
+    if (existing.length > 0) return existing[0].category_id;
+
+    const [inserted] = await db.query(
+        'INSERT INTO event_category (category_name, description) VALUES (?, ?)',
+        [cleanName, 'COEP Event Category']
+    );
+    return inserted.insertId;
+}
+
+// ---------------------------------------------------------------
 // GET /api/events
 // Retrieves all events joined with venue, organizer, club, and category.
 // Computes the derived Event Status using a CASE expression comparing
@@ -30,8 +108,6 @@ function getFriendlyError(err) {
 // SQL concepts: INNER JOIN across 5 tables, CASE expression, ORDER BY
 // ---------------------------------------------------------------
 router.get('/', async function (req, res) {
-    // Multi-table JOIN query with CASE expression for derived status.
-    // Notice: status is NOT a stored column in the database; it is derived dynamically.
     const sql = `
 SELECT
     event.event_id,
@@ -62,7 +138,6 @@ INNER JOIN event_category ON event.category_id = event_category.category_id
 ORDER BY event.event_date`;
     const params = [];
 
-    // async/await: pauses execution until the database query resolves
     try {
         const [rows] = await db.query(sql, params);
         res.json({ success: true, sql: sql, params: params, data: rows });
@@ -77,20 +152,18 @@ ORDER BY event.event_date`;
 // SQL concept: Parameterized INSERT with multiple foreign keys
 // ---------------------------------------------------------------
 router.post('/', async function (req, res) {
-    // Read input values sent from the frontend form
     const eventName    = req.body.event_name;
     const description  = req.body.description || '';
     const eventDate    = req.body.event_date;
     const eventType    = req.body.event_type || '';
     const startTime    = req.body.start_time || null;
     const endTime      = req.body.end_time || null;
-    const clubId       = req.body.club_id;
-    const organizerId  = req.body.organizer_id;
-    const venueId      = req.body.venue_id;
-    const categoryId   = req.body.category_id;
+    const rawClub      = req.body.club_id || req.body.club_name;
+    const rawOrganizer = req.body.organizer_id || req.body.organizer_name;
+    const rawVenue     = req.body.venue_id || req.body.venue_name;
+    const rawCategory  = req.body.category_id || req.body.category_name;
 
-    // Validate required fields
-    if (!eventName || !eventDate || !clubId || !organizerId || !venueId || !categoryId) {
+    if (!eventName || !eventDate || !rawClub || !rawOrganizer || !rawVenue || !rawCategory) {
         return res.json({
             success: false,
             sql: '',
@@ -99,26 +172,31 @@ router.post('/', async function (req, res) {
         });
     }
 
-    // Parameterized INSERT query: '?' placeholders prevent SQL injection
-    const sql = `
+    try {
+        // Resolve master values into valid foreign key IDs
+        const venueId     = await resolveVenueId(rawVenue);
+        const organizerId = await resolveOrganizerId(rawOrganizer);
+        const clubId      = await resolveClubId(rawClub);
+        const categoryId  = await resolveCategoryId(rawCategory);
+
+        const sql = `
 INSERT INTO event
     (event_name, description, event_date, event_type, start_time, end_time, club_id, organizer_id, venue_id, category_id)
 VALUES
     (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
-    const params = [
-        eventName,
-        description,
-        eventDate,
-        eventType,
-        startTime,
-        endTime,
-        clubId,
-        organizerId,
-        venueId,
-        categoryId
-    ];
+        const params = [
+            eventName,
+            description,
+            eventDate,
+            eventType,
+            startTime,
+            endTime,
+            clubId,
+            organizerId,
+            venueId,
+            categoryId
+        ];
 
-    try {
         const [result] = await db.query(sql, params);
         res.json({
             success: true,
@@ -127,7 +205,7 @@ VALUES
             data: [{ event_id: result.insertId, message: 'Event added successfully.' }]
         });
     } catch (err) {
-        res.json({ success: false, sql: sql, params: params, message: getFriendlyError(err) });
+        res.json({ success: false, sql: '', params: [], message: getFriendlyError(err) });
     }
 });
 
@@ -144,12 +222,12 @@ router.put('/:id', async function (req, res) {
     const eventType    = req.body.event_type || '';
     const startTime    = req.body.start_time || null;
     const endTime      = req.body.end_time || null;
-    const clubId       = req.body.club_id;
-    const organizerId  = req.body.organizer_id;
-    const venueId      = req.body.venue_id;
-    const categoryId   = req.body.category_id;
+    const rawClub      = req.body.club_id || req.body.club_name;
+    const rawOrganizer = req.body.organizer_id || req.body.organizer_name;
+    const rawVenue     = req.body.venue_id || req.body.venue_name;
+    const rawCategory  = req.body.category_id || req.body.category_name;
 
-    if (!eventName || !eventDate || !clubId || !organizerId || !venueId || !categoryId) {
+    if (!eventName || !eventDate || !rawClub || !rawOrganizer || !rawVenue || !rawCategory) {
         return res.json({
             success: false,
             sql: '',
@@ -158,7 +236,13 @@ router.put('/:id', async function (req, res) {
         });
     }
 
-    const sql = `
+    try {
+        const venueId     = await resolveVenueId(rawVenue);
+        const organizerId = await resolveOrganizerId(rawOrganizer);
+        const clubId      = await resolveClubId(rawClub);
+        const categoryId  = await resolveCategoryId(rawCategory);
+
+        const sql = `
 UPDATE event
 SET
     event_name   = ?,
@@ -173,21 +257,20 @@ SET
     category_id  = ?
 WHERE
     event_id = ?`;
-    const params = [
-        eventName,
-        description,
-        eventDate,
-        eventType,
-        startTime,
-        endTime,
-        clubId,
-        organizerId,
-        venueId,
-        categoryId,
-        eventId
-    ];
+        const params = [
+            eventName,
+            description,
+            eventDate,
+            eventType,
+            startTime,
+            endTime,
+            clubId,
+            organizerId,
+            venueId,
+            categoryId,
+            eventId
+        ];
 
-    try {
         await db.query(sql, params);
         res.json({
             success: true,
@@ -196,20 +279,16 @@ WHERE
             data: [{ message: 'Event updated successfully.' }]
         });
     } catch (err) {
-        res.json({ success: false, sql: sql, params: params, message: getFriendlyError(err) });
+        res.json({ success: false, sql: '', params: [], message: getFriendlyError(err) });
     }
 });
 
 // ---------------------------------------------------------------
 // DELETE /api/events/:id
 // Deletes an event by its event_id.
-// IMPORTANT NOTES:
-// 1. If registrations or feedback exist for this event, MySQL blocks
-//    the deletion (RESTRICT default). We show a friendly error to demonstrate
-//    referential integrity.
-// 2. Schedule rows in event_schedule are deleted automatically by MySQL
-//    because of ON DELETE CASCADE.
-// SQL concept: Parameterized DELETE with WHERE clause
+// Referential actions:
+// - RESTRICT: blocks deletion if registration/feedback exist
+// - CASCADE: automatically deletes related event_schedule rows
 // ---------------------------------------------------------------
 router.delete('/:id', async function (req, res) {
     const eventId = req.params.id;

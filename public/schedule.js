@@ -22,11 +22,23 @@ window.onload = function () {
 };
 
 // ---------------------------------------------------------------
+// cleanBehindTheScenes()
+// Removes any emojis from the Behind the Scenes header.
+// ---------------------------------------------------------------
+function cleanBehindTheScenes() {
+    var box = document.getElementById('behind-the-scenes');
+    if (box) {
+        box.innerHTML = box.innerHTML.replace('&#128270;', '').replace('🔍', '').trim();
+    }
+}
+
+// ---------------------------------------------------------------
 // loadEventsDropdown(preselectedId)
 // Fetches all events from GET /api/events to fill the selector.
 // ---------------------------------------------------------------
 async function loadEventsDropdown(preselectedId) {
     var result = await callApi('GET', '/api/events', null);
+    cleanBehindTheScenes();
 
     if (!result.success) {
         showMessage('schedule-form-message', 'Failed to load events: ' + result.message, true);
@@ -104,6 +116,7 @@ function onSelectEvent() {
 // ---------------------------------------------------------------
 async function loadSchedule(eventId) {
     var result = await callApi('GET', '/api/schedule/' + eventId, null);
+    cleanBehindTheScenes();
 
     if (!result.success) {
         document.getElementById('schedule-table-container').innerHTML =
@@ -176,6 +189,7 @@ async function submitActivity() {
     };
 
     var result = await callApi('POST', '/api/schedule/' + eventId, activityPayload);
+    cleanBehindTheScenes();
 
     if (result.success) {
         showMessage('schedule-form-message', 'Activity added successfully to schedule!', false);
@@ -199,6 +213,7 @@ async function deleteActivity(eventId, scheduleId) {
     if (!confirmed) return;
 
     var result = await callApi('DELETE', '/api/schedule/' + eventId + '/' + scheduleId, null);
+    cleanBehindTheScenes();
 
     if (result.success) {
         showMessage('schedule-form-message', 'Activity #' + scheduleId + ' deleted from schedule.', false);

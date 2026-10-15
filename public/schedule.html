@@ -5,20 +5,77 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Event Schedule - Event Management System</title>
     <link rel="stylesheet" href="style.css">
+    <style>
+        /* Light COEP watermark background */
+        body {
+            background-color: #f3f5f8;
+            background-image:
+                linear-gradient(rgba(244, 247, 251, 0.92), rgba(244, 247, 251, 0.92)),
+                url('images/coep_campus.png');
+            background-attachment: fixed;
+            background-size: cover;
+            background-position: center top;
+            background-repeat: no-repeat;
+            min-height: 100vh;
+        }
+
+        .container {
+            position: relative;
+            z-index: 2;
+        }
+
+        /* Subtle Bell Tower watermark on bottom right */
+        .bell-tower-watermark {
+            position: fixed;
+            right: 15px;
+            bottom: 10px;
+            width: 240px;
+            max-width: 26vw;
+            opacity: 0.16;
+            pointer-events: none;
+            z-index: 1;
+            filter: drop-shadow(0 4px 12px rgba(0,0,0,0.06));
+        }
+
+        /* Clean curved white cards */
+        .card {
+            background: rgba(255, 255, 255, 0.97) !important;
+            border-radius: 12px !important;
+            border: 1px solid #dce4ec !important;
+            box-shadow: 0 4px 18px rgba(44, 62, 80, 0.06) !important;
+        }
+
+        .form-group input,
+        .form-group select {
+            border-radius: 6px !important;
+            border: 1px solid #cbd5e1 !important;
+            background: #ffffff !important;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            border-color: #2980b9 !important;
+            background: #ffffff !important;
+        }
+
+        @media (max-width: 768px) {
+            .bell-tower-watermark {
+                display: none;
+            }
+        }
+    </style>
 </head>
 <body>
 
-<!-- Navbar is automatically inserted by addNavbar() in common.js -->
+<!-- Subtle COEP Bell Tower watermark on right -->
+<img src="images/coep_bell_tower.png" alt="" class="bell-tower-watermark">
 
 <div class="container">
     <h1>Event Schedule</h1>
-    <p style="color:#666; margin-bottom:20px;">
-        Part 3: Weak Entity module. Manages session and activity timelines for each event.
-    </p>
 
-    <!-- Explanatory concept callout -->
+    <!-- Explanatory concept callout (no emojis) -->
     <div class="card" style="background:#f4f8fb; border-left:4px solid #2980b9;">
-        <h3 style="color:#2c3e50; margin-bottom:6px; font-size:15px;">&#128218; DBMS Weak Entity & Composite Key Concept</h3>
+        <h3 style="color:#2c3e50; margin-bottom:6px; font-size:15px;">DBMS Weak Entity and Composite Key Concept</h3>
         <p style="font-size:13.5px; line-height:1.6; color:#444;">
             <strong>1. Weak Entity:</strong> <code>event_schedule</code> cannot exist without its parent <code>event</code>.<br>
             <strong>2. Partial Key:</strong> <code>schedule_id</code> is NOT unique globally. Activity 1 exists for Event 1, and Activity 1 also exists for Event 2.<br>
@@ -51,7 +108,7 @@
 
         <div class="form-group">
             <label for="activity-name">Activity / Session Name *</label>
-            <input type="text" id="activity-name" placeholder="e.g. Inauguration & Welcome Address, Lunch Break, Hackathon Finals">
+            <input type="text" id="activity-name" placeholder="e.g. Inauguration, Keynote, Lunch Break, Hackathon Finals">
         </div>
 
         <div style="display:flex; gap:16px;">

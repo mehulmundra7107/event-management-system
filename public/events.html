@@ -5,17 +5,84 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Events - Event Management System</title>
     <link rel="stylesheet" href="style.css">
+    <style>
+        /* Light COEP watermark background */
+        body {
+            background-color: #f3f5f8;
+            background-image:
+                linear-gradient(rgba(244, 247, 251, 0.92), rgba(244, 247, 251, 0.92)),
+                url('images/coep_campus.png');
+            background-attachment: fixed;
+            background-size: cover;
+            background-position: center top;
+            background-repeat: no-repeat;
+            min-height: 100vh;
+        }
+
+        .container {
+            position: relative;
+            z-index: 2;
+        }
+
+        /* Subtle Bell Tower watermark on bottom right */
+        .bell-tower-watermark {
+            position: fixed;
+            right: 15px;
+            bottom: 10px;
+            width: 240px;
+            max-width: 26vw;
+            opacity: 0.16;
+            pointer-events: none;
+            z-index: 1;
+            filter: drop-shadow(0 4px 12px rgba(0,0,0,0.06));
+        }
+
+        /* Clean curved white cards with soft elevation */
+        .card {
+            background: rgba(255, 255, 255, 0.97) !important;
+            border-radius: 12px !important;
+            border: 1px solid #dce4ec !important;
+            box-shadow: 0 4px 18px rgba(44, 62, 80, 0.06) !important;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            border-radius: 6px !important;
+            border: 1px solid #cbd5e1 !important;
+            background: #ffffff !important;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            border-color: #2980b9 !important;
+            background: #ffffff !important;
+        }
+
+        .dropdown-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        @media (max-width: 768px) {
+            .dropdown-grid {
+                grid-template-columns: 1fr;
+            }
+            .bell-tower-watermark {
+                display: none;
+            }
+        }
+    </style>
 </head>
 <body>
 
-<!-- Navbar is automatically inserted by addNavbar() in common.js -->
+<!-- Subtle COEP Bell Tower watermark on right -->
+<img src="images/coep_bell_tower.png" alt="" class="bell-tower-watermark">
 
 <div class="container">
     <h1>Events Management</h1>
-    <p style="color:#666; margin-bottom:20px;">
-        Part 3: Events module. Manages college events with venue, organizer, club, and category foreign keys.
-        Event status is derived dynamically in SQL and never stored.
-    </p>
 
     <!-- -------------------------------------------------------
          SECTION 1: Add / Edit Event Form
@@ -57,8 +124,8 @@
             </div>
         </div>
 
-        <!-- Master Data Foreign Key Dropdowns (populated from Part 2 master routes) -->
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+        <!-- Master Data Foreign Key Dropdowns -->
+        <div class="dropdown-grid">
             <div class="form-group">
                 <label for="event-venue">Venue *</label>
                 <select id="event-venue">
@@ -72,20 +139,36 @@
                     <option value="">-- select organizer --</option>
                 </select>
             </div>
+        </div>
+
+        <!-- Sponsoring Club / Committee: Two Dropdowns (Category + Specific Club) -->
+        <div class="dropdown-grid">
+            <div class="form-group">
+                <label for="club-category-select">Sponsoring Club Category *</label>
+                <select id="club-category-select" onchange="onClubCategoryChange()">
+                    <option value="">-- select club category --</option>
+                    <option value="Technical clubs">Technical clubs</option>
+                    <option value="Academic and co-curricular">Academic and co-curricular</option>
+                    <option value="Cultural and creative">Cultural and creative</option>
+                    <option value="Social and environmental">Social and environmental</option>
+                    <option value="Sports">Sports</option>
+                    <option value="Festivals and other activities">Festivals and other activities</option>
+                </select>
+            </div>
 
             <div class="form-group">
                 <label for="event-club">Sponsoring Club / Committee *</label>
                 <select id="event-club">
-                    <option value="">-- select club --</option>
+                    <option value="">-- select club / committee --</option>
                 </select>
             </div>
+        </div>
 
-            <div class="form-group">
-                <label for="event-category">Category *</label>
-                <select id="event-category">
-                    <option value="">-- select category --</option>
-                </select>
-            </div>
+        <div class="form-group">
+            <label for="event-category">Category *</label>
+            <select id="event-category">
+                <option value="">-- select category --</option>
+            </select>
         </div>
 
         <div class="mt-10">
@@ -102,7 +185,7 @@
     ------------------------------------------------------- -->
     <div class="card">
         <h2>List of Events</h2>
-        <p style="font-size:13px; color:#555; margin-bottom:14px; background:#eef5fb; padding:8px 12px; border-left:4px solid #2980b9; border-radius:3px;">
+        <p style="font-size:13px; color:#555; margin-bottom:14px; background:#eef5fb; padding:8px 12px; border-left:4px solid #2980b9; border-radius:4px;">
             <strong>DBMS Concept Note:</strong> Event Status (<em>Upcoming / Ongoing / Completed</em>) is a
             <strong>derived attribute</strong> computed in real time using a SQL <code>CASE</code> expression comparing <code>event_date</code>
             with <code>CURDATE()</code>. It is NOT stored as a physical column in the <code>event</code> table.
@@ -114,7 +197,6 @@
 
     <!-- -------------------------------------------------------
          Behind the Scenes box
-         Shows SQL query, parameters, row count, and raw JSON response
     ------------------------------------------------------- -->
     <div id="behind-the-scenes"></div>
 </div>
