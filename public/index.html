@@ -5,8 +5,81 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard - Event Management System</title>
     <link rel="stylesheet" href="style.css">
+    <style>
+        html, body {
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .bg-canvas {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            display: flex;
+            align-items: stretch;
+        }
+
+        .bg-left {
+            flex: 0 0 28vw;
+            background: url('images/coep_campus.png') right bottom / cover no-repeat;
+            -webkit-mask-image: linear-gradient(to right, black 60%, transparent 100%);
+                    mask-image: linear-gradient(to right, black 60%, transparent 100%);
+        }
+
+        .bg-centre {
+            flex: 1;
+            background: #dce8f5;
+        }
+
+        .bg-right {
+            flex: 0 0 28vw;
+            background: url('images/coep_bell_tower.png') left bottom / cover no-repeat;
+            -webkit-mask-image: linear-gradient(to left, black 60%, transparent 100%);
+                    mask-image: linear-gradient(to left, black 60%, transparent 100%);
+        }
+
+        nav {
+            position: relative;
+            z-index: 10;
+        }
+
+        .container {
+            position: relative;
+            z-index: 5;
+            max-width: 740px;
+            margin: 28px auto;
+            padding: 0 20px 40px;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.97) !important;
+            border-radius: 14px !important;
+            border: 1px solid rgba(200, 215, 230, 0.9) !important;
+            box-shadow: 0 8px 32px rgba(20, 40, 80, 0.13) !important;
+            backdrop-filter: blur(4px);
+            padding: 26px 30px !important;
+            margin-bottom: 24px !important;
+        }
+
+        @media (max-width: 900px) {
+            .bg-left, .bg-right { flex: 0 0 18vw; }
+        }
+
+        @media (max-width: 600px) {
+            .bg-left, .bg-right { display: none; }
+        }
+    </style>
 </head>
 <body>
+
+<!-- Full-screen COEP backdrop -->
+<div class="bg-canvas">
+    <div class="bg-left"></div>
+    <div class="bg-centre"></div>
+    <div class="bg-right"></div>
+</div>
 
 <div class="container">
     <h1>Dashboard</h1>

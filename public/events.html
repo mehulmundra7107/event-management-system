@@ -6,20 +6,137 @@
     <title>Events - COEP Event Management System</title>
     <link rel="stylesheet" href="style.css">
     <style>
+        /* ── Full-screen COEP backdrop ── */
+        html, body {
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Fixed canvas behind everything */
+        .bg-canvas {
+            position: fixed;
+            inset: 0;               /* top/right/bottom/left all 0 */
+            z-index: 0;
+            display: flex;
+            align-items: stretch;
+        }
+
+        /* Left panel: campus building */
+        .bg-left {
+            flex: 0 0 28vw;
+            background: url('images/coep_campus.png') right bottom / cover no-repeat;
+        }
+
+        /* Right panel: bell tower */
+        .bg-right {
+            flex: 0 0 28vw;
+            background: url('images/coep_bell_tower.png') left bottom / cover no-repeat;
+        }
+
+        /* Centre fill so there's no gap */
+        .bg-centre {
+            flex: 1;
+            background: #dce8f5;     /* same sky-blue tone as the photos */
+        }
+
+        /* Seamless blend – left photo fades into center */
+        .bg-left {
+            -webkit-mask-image: linear-gradient(to right, black 60%, transparent 100%);
+                    mask-image: linear-gradient(to right, black 60%, transparent 100%);
+        }
+
+        /* Seamless blend – right photo fades into center */
+        .bg-right {
+            -webkit-mask-image: linear-gradient(to left, black 60%, transparent 100%);
+                    mask-image: linear-gradient(to left, black 60%, transparent 100%);
+        }
+
+        /* Nav sits above backdrop */
+        nav {
+            position: relative;
+            z-index: 10;
+        }
+
+        /* Page content above backdrop */
+        .container {
+            position: relative;
+            z-index: 5;
+            max-width: 740px;
+            margin: 28px auto;
+            padding: 0 20px 40px;
+        }
+
+        /* Crisp white card */
+        .card {
+            background: rgba(255, 255, 255, 0.97) !important;
+            border-radius: 14px !important;
+            border: 1px solid rgba(200, 215, 230, 0.9) !important;
+            box-shadow: 0 8px 32px rgba(20, 40, 80, 0.13) !important;
+            backdrop-filter: blur(4px);
+            padding: 26px 30px !important;
+            margin-bottom: 24px !important;
+        }
+
+        .form-group label {
+            color: #2d3748;
+            font-weight: 600;
+            font-size: 13.5px;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            border-radius: 8px !important;
+            border: 1px solid #cbd5e1 !important;
+            background: #ffffff !important;
+            font-size: 14px;
+            padding: 9px 12px;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            border-color: #2563eb !important;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.14) !important;
+            outline: none;
+        }
+
         .dropdown-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 16px;
         }
 
-        @media (max-width: 768px) {
-            .dropdown-grid {
-                grid-template-columns: 1fr;
-            }
+        table {
+            background: #ffffff;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        table th {
+            background-color: #1e293b !important;
+        }
+
+        @media (max-width: 900px) {
+            .bg-left, .bg-right { flex: 0 0 18vw; }
+            .dropdown-grid { grid-template-columns: 1fr; }
+        }
+
+        @media (max-width: 600px) {
+            .bg-left, .bg-right { display: none; }
         }
     </style>
 </head>
 <body>
+
+<!-- Full-screen COEP backdrop -->
+<div class="bg-canvas">
+    <div class="bg-left"></div>
+    <div class="bg-centre"></div>
+    <div class="bg-right"></div>
+</div>
 
 <div class="container">
     <!-- -------------------------------------------------------
