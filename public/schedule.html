@@ -11,60 +11,44 @@
             min-height: 100vh;
             overflow-x: hidden;
             position: relative;
-            background-color: #c9d8e8;
+            background: linear-gradient(180deg, #d8e5f2 0%, #e6eff7 40%, #f0f4f9 100%);
+            background-attachment: fixed;
         }
 
-        /* Full-window merged COEP scenic backdrop */
-        .coep-backdrop {
+        /* -------------------------------------------------------------
+           COEP Bell Tower: Positioned ENTIRELY on the right,
+           fully visible from top spire to road base in its original color.
+        ------------------------------------------------------------- */
+        .coep-tower-right {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            z-index: 0;
-            overflow: hidden;
+            right: 12px;
+            bottom: 0;
+            height: 92vh;
+            width: auto;
+            max-width: 32vw;
+            object-fit: contain;
+            object-position: right bottom;
+            z-index: 1;
             pointer-events: none;
-            background-color: #c9d8e8;
+            filter: drop-shadow(-8px 6px 22px rgba(20, 35, 55, 0.18));
+            transition: opacity 0.3s ease;
         }
 
-        /* Historic Campus Buildings on Left */
-        .coep-scene-left {
-            position: absolute;
-            top: 0;
+        /* Historic Campus Buildings on the left */
+        .coep-building-left {
+            position: fixed;
             left: 0;
-            width: 58vw;
-            height: 100vh;
-            background-image: url('images/coep_campus.png');
-            background-size: cover;
-            background-position: left bottom;
-            background-repeat: no-repeat;
-            -webkit-mask-image: linear-gradient(to right, rgba(0,0,0,1) 45%, rgba(0,0,0,0.7) 65%, rgba(0,0,0,0) 100%);
-            mask-image: linear-gradient(to right, rgba(0,0,0,1) 45%, rgba(0,0,0,0.7) 65%, rgba(0,0,0,0) 100%);
-        }
-
-        /* Iconic Bell Tower on Right - shifted outward so it is clearly visible beside the form */
-        .coep-scene-right {
-            position: absolute;
-            top: 0;
-            right: 0;
-            width: 52vw;
-            height: 100vh;
-            background-image: url('images/coep_bell_tower.png');
-            background-size: cover;
-            background-position: 80% bottom;
-            background-repeat: no-repeat;
-            -webkit-mask-image: linear-gradient(to left, rgba(0,0,0,1) 45%, rgba(0,0,0,0.7) 65%, rgba(0,0,0,0) 100%);
-            mask-image: linear-gradient(to left, rgba(0,0,0,1) 45%, rgba(0,0,0,0.7) 65%, rgba(0,0,0,0) 100%);
-        }
-
-        /* Atmospheric blend connecting the sky and trees across the entire window */
-        .coep-backdrop-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            background: linear-gradient(180deg, rgba(205, 222, 240, 0.4) 0%, rgba(225, 238, 248, 0.15) 50%, rgba(195, 214, 232, 0.35) 100%);
+            bottom: 0;
+            height: 75vh;
+            width: auto;
+            max-width: 24vw;
+            object-fit: contain;
+            object-position: left bottom;
+            z-index: 0;
+            pointer-events: none;
+            filter: drop-shadow(6px 4px 18px rgba(20, 35, 55, 0.12));
+            -webkit-mask-image: linear-gradient(to right, rgba(0,0,0,1) 70%, rgba(0,0,0,0) 100%);
+            mask-image: linear-gradient(to right, rgba(0,0,0,1) 70%, rgba(0,0,0,0) 100%);
         }
 
         nav {
@@ -76,9 +60,16 @@
         .container {
             position: relative;
             z-index: 5;
-            max-width: 780px;
-            margin: 26px auto 26px calc(50% - 430px);
+            max-width: 720px;
+            margin: 24px auto;
             padding: 0 16px;
+        }
+
+        @media (min-width: 1200px) {
+            .container {
+                margin-left: max(30px, calc(50vw - 490px));
+                margin-right: auto;
+            }
         }
 
         .coep-header {
@@ -146,24 +137,29 @@
             background-color: #1e293b !important;
         }
 
-        @media (max-width: 1200px) {
+        @media (max-width: 1024px) {
             .container {
-                margin: 24px auto;
+                margin: 20px auto;
+                max-width: 95%;
             }
-            .coep-scene-right {
-                background-position: 85% bottom;
+            .coep-tower-right {
+                opacity: 0.18;
+                z-index: 0;
+                max-width: 40vw;
+            }
+            .coep-building-left {
+                opacity: 0.14;
             }
         }
     </style>
 </head>
 <body>
 
-<!-- Full-screen merged COEP scenic backdrop -->
-<div class="coep-backdrop">
-    <div class="coep-scene-left"></div>
-    <div class="coep-scene-right"></div>
-    <div class="coep-backdrop-overlay"></div>
-</div>
+<!-- Left Campus Building Painting -->
+<img src="images/coep_campus.png" alt="COEP Campus" class="coep-building-left">
+
+<!-- COEP Bell Tower entirely on the right, fully visible from top to bottom -->
+<img src="images/coep_bell_tower.png" alt="COEP Bell Tower" class="coep-tower-right">
 
 <div class="container">
     <div class="coep-header">
