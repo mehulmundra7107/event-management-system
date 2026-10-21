@@ -3,20 +3,262 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Events - Event Management System</title>
+    <title>Events - COEP Event Management System</title>
     <link rel="stylesheet" href="style.css">
+    <style>
+        /* ── Full-screen COEP backdrop ── */
+        html, body {
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Fixed canvas behind everything */
+        .bg-canvas {
+            position: fixed;
+            inset: 0;               /* top/right/bottom/left all 0 */
+            z-index: 0;
+            display: flex;
+            align-items: stretch;
+        }
+
+        /* Left panel: campus building */
+        .bg-left {
+            flex: 0 0 28vw;
+            background: url('images/coep_campus.png') right bottom / cover no-repeat;
+        }
+
+        /* Right panel: bell tower */
+        .bg-right {
+            flex: 0 0 28vw;
+            background: url('images/coep_bell_tower.png') left bottom / cover no-repeat;
+        }
+
+        /* Centre fill so there's no gap */
+        .bg-centre {
+            flex: 1;
+            background: #dce8f5;     /* same sky-blue tone as the photos */
+        }
+
+        /* Seamless blend – left photo fades into center */
+        .bg-left {
+            -webkit-mask-image: linear-gradient(to right, black 60%, transparent 100%);
+                    mask-image: linear-gradient(to right, black 60%, transparent 100%);
+        }
+
+        /* Seamless blend – right photo fades into center */
+        .bg-right {
+            -webkit-mask-image: linear-gradient(to left, black 60%, transparent 100%);
+                    mask-image: linear-gradient(to left, black 60%, transparent 100%);
+        }
+
+        /* Nav sits above backdrop */
+        nav {
+            position: relative;
+            z-index: 10;
+        }
+
+        /* Page content above backdrop */
+        .container {
+            position: relative;
+            z-index: 5;
+            max-width: 740px;
+            margin: 28px auto;
+            padding: 0 20px 40px;
+        }
+
+        /* Crisp white card */
+        .card {
+            background: rgba(255, 255, 255, 0.97) !important;
+            border-radius: 14px !important;
+            border: 1px solid rgba(200, 215, 230, 0.9) !important;
+            box-shadow: 0 8px 32px rgba(20, 40, 80, 0.13) !important;
+            backdrop-filter: blur(4px);
+            padding: 26px 30px !important;
+            margin-bottom: 24px !important;
+        }
+
+        .form-group label {
+            color: #2d3748;
+            font-weight: 600;
+            font-size: 13.5px;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            border-radius: 8px !important;
+            border: 1px solid #cbd5e1 !important;
+            background: #ffffff !important;
+            font-size: 14px;
+            padding: 9px 12px;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            border-color: #2563eb !important;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.14) !important;
+            outline: none;
+        }
+
+        .dropdown-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        table {
+            background: #ffffff;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        table th {
+            background-color: #1e293b !important;
+        }
+
+        @media (max-width: 900px) {
+            .bg-left, .bg-right { flex: 0 0 18vw; }
+            .dropdown-grid { grid-template-columns: 1fr; }
+        }
+
+        @media (max-width: 600px) {
+            .bg-left, .bg-right { display: none; }
+        }
+    </style>
 </head>
 <body>
+
+<!-- Full-screen COEP backdrop -->
+<div class="bg-canvas">
+    <div class="bg-left"></div>
+    <div class="bg-centre"></div>
+    <div class="bg-right"></div>
+</div>
+
 <div class="container">
-    <h1>Events</h1>
-    <div class="card">
-        <p>This page will be built by <strong>Member 3</strong> (Part 3).</p>
-        <p>It will manage events with venue, organizer, club, and category dropdowns,
-           and show the derived event status (Upcoming / Ongoing / Completed).</p>
+    <!-- -------------------------------------------------------
+         SECTION 1: Add / Edit Event Form
+    ------------------------------------------------------- -->
+    <div class="card form-section" id="event-form-card">
+        <h2 id="form-heading">Add New Event</h2>
+
+        <!-- Hidden input: holds the event_id when editing. Empty when adding. -->
+        <input type="hidden" id="edit-event-id" value="">
+
+        <div class="form-group">
+            <label for="event-name">Event Name *</label>
+            <input type="text" id="event-name" placeholder="e.g. Hackathon 2026, Annual Cultural Fest">
+        </div>
+
+        <div class="form-group">
+            <label for="event-description">Description</label>
+            <textarea id="event-description" rows="2" placeholder="Brief description of the event"></textarea>
+        </div>
+
+        <div class="form-group">
+            <label for="event-date">Event Date *</label>
+            <input type="date" id="event-date">
+        </div>
+
+        <div class="form-group">
+            <label for="event-type">Event Type</label>
+            <input type="text" id="event-type" placeholder="e.g. Competition, Workshop, Seminar, Cultural">
+        </div>
+
+        <div style="display: flex; gap: 16px;">
+            <div class="form-group" style="flex: 1;">
+                <label for="event-start-time">Start Time</label>
+                <input type="time" id="event-start-time">
+            </div>
+            <div class="form-group" style="flex: 1;">
+                <label for="event-end-time">End Time</label>
+                <input type="time" id="event-end-time">
+            </div>
+        </div>
+
+        <!-- Master Data Foreign Key Dropdowns -->
+        <div class="dropdown-grid">
+            <div class="form-group">
+                <label for="event-venue">Venue *</label>
+                <select id="event-venue">
+                    <option value="">-- select venue --</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="event-organizer">Organizer *</label>
+                <select id="event-organizer">
+                    <option value="">-- select organizer --</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Sponsoring Club / Committee: Two Dropdowns (Category + Specific Club) -->
+        <div class="dropdown-grid">
+            <div class="form-group">
+                <label for="club-category-select">Sponsoring Club Category *</label>
+                <select id="club-category-select" onchange="onClubCategoryChange()">
+                    <option value="">-- select club category --</option>
+                    <option value="Technical clubs">Technical clubs</option>
+                    <option value="Academic and co-curricular">Academic and co-curricular</option>
+                    <option value="Cultural and creative">Cultural and creative</option>
+                    <option value="Social and environmental">Social and environmental</option>
+                    <option value="Sports">Sports</option>
+                    <option value="Festivals and other activities">Festivals and other activities</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="event-club">Sponsoring Club / Committee *</label>
+                <select id="event-club">
+                    <option value="">-- select club / committee --</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="event-category">Category *</label>
+            <select id="event-category">
+                <option value="">-- select category --</option>
+            </select>
+        </div>
+
+        <div class="mt-10">
+            <button class="btn-primary" id="event-submit-btn" onclick="submitEvent()">Add Event</button>
+            <button class="btn-secondary no-print" id="event-cancel-btn" onclick="cancelEdit()" style="display:none;">Cancel Edit</button>
+        </div>
+
+        <!-- Feedback message under form -->
+        <div class="message" id="event-form-message"></div>
     </div>
+
+    <!-- -------------------------------------------------------
+         SECTION 2: List of Events
+    ------------------------------------------------------- -->
+    <div class="card">
+        <h2>List of Events</h2>
+        <p style="font-size:13px; color:#555; margin-bottom:14px; background:#eef5fb; padding:8px 12px; border-left:4px solid #2980b9; border-radius:4px;">
+            <strong>DBMS Concept Note:</strong> Event Status (<em>Upcoming / Ongoing / Completed</em>) is a
+            <strong>derived attribute</strong> computed in real time using a SQL <code>CASE</code> expression comparing <code>event_date</code>
+            with <code>CURDATE()</code>. It is NOT stored as a physical column in the <code>event</code> table.
+        </p>
+
+        <!-- Events table container -->
+        <div id="events-table-container"></div>
+    </div>
+
+    <!-- -------------------------------------------------------
+         Behind the Scenes box
+    ------------------------------------------------------- -->
     <div id="behind-the-scenes"></div>
 </div>
+
+<!-- Load shared helpers first, then this page's script -->
 <script src="common.js"></script>
-<script>window.onload = function() { addNavbar(); };</script>
+<script src="events.js"></script>
+
 </body>
 </html>
