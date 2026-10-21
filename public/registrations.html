@@ -7,15 +7,64 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+
+<!-- Navbar is inserted here by addNavbar() in common.js -->
+
 <div class="container">
-    <h1>Registrations</h1>
-    <div class="card">
-        <p>This page will be built by <strong>Member 4</strong> (Part 4).</p>
-        <p>It will handle student event registrations with capacity check and UNIQUE constraint demo.</p>
+    <h1>Event Registrations</h1>
+
+    <!-- -------------------------------------------------------
+         SECTION 1: Register Student for Event Form
+    ------------------------------------------------------- -->
+    <div class="card form-section" id="registration-form-card">
+        <h2>Register Student for Event</h2>
+
+        <div class="form-group">
+            <label for="student-id">Select Student</label>
+            <select id="student-id">
+                <option value="">-- select --</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="event-id">Select Event</label>
+            <select id="event-id">
+                <option value="">-- select --</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="registration-date">Registration Date</label>
+            <input type="date" id="registration-date">
+        </div>
+
+        <button class="btn-primary" id="submit-btn" onclick="submitRegistration()">Register Student</button>
+
+        <!-- Message shown after form submit (e.g. success or errors in red) -->
+        <div class="message" id="form-message"></div>
     </div>
+
+    <!-- -------------------------------------------------------
+         SECTION 2: List of Registrations
+    ------------------------------------------------------- -->
+    <div class="card">
+        <h2>List of Registrations</h2>
+
+        <!-- The table is built here by buildTable() in registrations.js -->
+        <div id="registrations-table-container"></div>
+    </div>
+
+    <!-- -------------------------------------------------------
+         Behind the Scenes box
+         Shows the SQL query, parameters, and raw JSON
+         for every API call made on this page.
+    ------------------------------------------------------- -->
     <div id="behind-the-scenes"></div>
 </div>
+
+<!-- Load shared helpers first, then this page's logic -->
 <script src="common.js"></script>
-<script>window.onload = function() { addNavbar(); };</script>
+<script src="registrations.js"></script>
+
 </body>
 </html>
