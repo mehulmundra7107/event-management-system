@@ -1,0 +1,2 @@
+College Event Management System - ER diagram
+Rectangle = strong entity, double rectangle = weak entity, diamond = relationship, double diamond = identifying relationship, ellipse = attribute, double ellipse = multivalued attribute, dashed ellipse = derived attribute, underline = primary key, dashed underline = partial key, 1 / N / M = cardinality. Foreign keys appear through the relationships.
